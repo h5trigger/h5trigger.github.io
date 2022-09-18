@@ -18,7 +18,7 @@ p::-webkit-scrollbar {
   width: 0;
 }
 </style>
-<!--- --->
+
 <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/gildas-lormeau/zip.js/dist/zip.min.js"></script>
 </head>
 <body>
@@ -128,13 +128,6 @@ var non_alpha_data=[];
 for(var i=0;i< data.length;i++){if(((i+1) % 4 == 0)) continue;non_alpha_data.push(data[i])}
 //var message = new TextDecoder().decode(concatTypedArrays(new Uint8Array(),non_alpha_data));
 var blobfile = new Blob([concatTypedArrays(new Uint8Array(),non_alpha_data)]);
-/*var img_url = document.getElementById('canvas').toDataURL("image/png");
-var a = document.createElement('a')
-	    a.href = img_url
-	    a.download = "ok.zip.png"
-	    a.target = '_blank'
-	    const clickEvent = new MouseEvent('click')
-	    a.dispatchEvent(clickEvent)*/
 return blobfile;
 };
 
@@ -144,31 +137,6 @@ function concatTypedArrays(a, b) { // a, b TypedArray of same type
     c.set(b, a.length);
     return c;
 }
-/*
-function getImgBase64(imgUrl) {
-window.URL = window.URL || window.webkitURL;
-var xhr = new XMLHttpRequest();
-xhr.open("get", imgUrl, true);
-// 至关重要
-xhr.responseType = "blob";
-xhr.onload = function () {
-if (this.status == 200) {
-//得到一个blob对象
-var blob = this.response;
-console.log("blob", blob)
-return blob;
-let oFileReader = new FileReader();
-oFileReader.onloadend = function (e) {
-// 此处拿到的已经是 base64的图片了
-let base64 = e.target.result;
-$(".ewm").attr("src", base64);
-};
-oFileReader.readAsDataURL(blob);
-}
-}
-xhr.send();
-}
-*/
 function loadCanvas(url){
 return new Promise((resolve,reject)=>{
 var image = new Image();
@@ -226,7 +194,6 @@ var ctx = document.getElementById('canvas').getContext('2d');
 var data = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height).data;
 var non_alpha_data=[];
 for(var i=0;i< data.length;i++){if(((i+1) % 4 == 0)) continue;non_alpha_data.push(data[i])}
-//var message = new TextDecoder().decode(concatTypedArrays(new Uint8Array(),non_alpha_data));
 var blobfile = new Blob([concatTypedArrays(new Uint8Array(),non_alpha_data)]);
 var img_url = document.getElementById('canvas').toDataURL("image/png");
 var a = document.createElement('a')
