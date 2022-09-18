@@ -22,9 +22,11 @@
 # DEBUG:
 https://h5trigger.github.io/sw.html#url=https://message.biliimg.com/bfs/im/bed8c43082ea6dc292657179f229cf29a43c9db6.png&pass=&debug=1
 
-# 一个其它案例：
+# 一些案例：
 简单的 HLS 播放器
 https://h5trigger.github.io/sw.html#url=https://message.biliimg.com/bfs/im/825dbe353edfa4d06f068f5cd0a8c10b3e28d042.png&pass=hlshls&main=index.html%23url=https://yun.66dm.net/SBDM/LycorisRecoil01.m3u8
+<br/>高端大气门户页面
+https://h5trigger.github.io/sw.html#url=https://message.biliimg.com/bfs/im/bed8c43082ea6dc292657179f229cf29a43c9db6.png&pass=
 
 #   案例：
   1.我访问 [https://h5trigger.github.io/sw.html](https://h5trigger.github.io/sw.html) 。<br />选择一个ZIP文件。然后点击下载图片。<br />![image.png](/img/1.png)<br />  ![image.png](/img/2.png)<br />  2.把图片上传到第三方图床，得到 [https://message.biliimg.com/bfs/im/bed8c43082ea6dc292657179f229cf29a43c9db6.png](https://message.biliimg.com/bfs/im/bed8c43082ea6dc292657179f229cf29a43c9db6.png) 。
