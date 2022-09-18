@@ -19,6 +19,8 @@
 # 分发：
 欢迎分发 H5trigger 。这是一个纯前端项目。核心文件sw.html , sw.js , (zip.min.js) .<br />把它们上传到您的 https网站的根目录，就能形成新的H5泛解析节点，让这个巧妙的构想焕发更大的活力。<br />
 
+# DEBUG:
+https://h5trigger.github.io/sw.html#url=https://message.biliimg.com/bfs/im/bed8c43082ea6dc292657179f229cf29a43c9db6.png&pass=&debug=1
 
 #   案例：
   1.我访问 [https://h5trigger.github.io/sw.html](https://h5trigger.github.io/sw.html) 。<br />选择一个ZIP文件。然后点击下载图片。<br />![image.png](/img/1.png)<br />  ![image.png](/img/2.png)<br />  2.把图片上传到第三方图床，得到 [https://message.biliimg.com/bfs/im/bed8c43082ea6dc292657179f229cf29a43c9db6.png](https://message.biliimg.com/bfs/im/bed8c43082ea6dc292657179f229cf29a43c9db6.png) 。
