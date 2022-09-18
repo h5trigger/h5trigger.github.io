@@ -33,5 +33,8 @@ https://h5trigger.github.io/sw.html#url=https://message.biliimg.com/bfs/im/bed8c
 
 3.访问   <br />[https://h5trigger.github.io/sw.html#url=https://message.biliimg.com/bfs/im/bed8c43082ea6dc292657179f229cf29a43c9db6.png](https://h5trigger.github.io/sw.html#url=https://message.biliimg.com/bfs/im/bed8c43082ea6dc292657179f229cf29a43c9db6.png)<br />![image.png](/img/3.png)
 
-
+# 后话
+主要是这个githubPages一直存在，自写的一些小项目不用公开搭建，直接把加密zip包上传到图床，就可以调用这个githubpage加载网站，还可以分享给别人，加上zip密码，任意第三方也不可访问这个网站。少了很多风险，适合搭一些自用的站啥的，比如动漫采集网站。<br/>
+至于后端，其实只要用php搞一个简单的接口就行，就代理访问任意资源加上access-control-allow-origin: * 中转实现跨域。<br/>
+其他任意功能均可前端用js+正则提取，属实是十分方便了。
 
