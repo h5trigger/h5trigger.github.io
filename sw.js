@@ -47,8 +47,6 @@ self.addEventListener("activate", function(event) {
 });
  
 self.addEventListener("fetch", function(event) {
-  // 截取页面的资源请求
-//?问题
   event.respondWith(
     // 返回页面的资源请求
     caches.match(new URL(event.request.url).pathname).then(function(res) {
@@ -58,38 +56,8 @@ self.addEventListener("fetch", function(event) {
         // 返回缓存中的资源
         return res;
       }
-	  
-	  
+
 	  return fetch(event.request); 
     })
   );
 });
-/*
-function requestBackend(event) {
-  // 请求备份操作
-  var url = event.request.clone();
-  return fetch(url).then(function(res) {
-    // 请求线上资源
-    //if not a valid response send the error
-    if (!res || res.status !== 200 || res.type !== "basic") {
-      return res;
-    }
- 
-    var response = res.clone();
- 
-    caches.open(CACHE_VERSION).then(function(cache) {
-      // 缓存从线上获取的资源
-      cache.put(event.request, response/*new Response(
-        `
-        1111wwww
-        `,
-        {
-          headers: {
-            "Content-Type": "text/html"
-          }
-        }
-      ));
-    });
-    return res;
-  });
-}*/
