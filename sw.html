@@ -104,19 +104,21 @@ async function downloadUnZipFile (password,file) {
     }
 
 function hookFile(filename,fileblob){
+if(!(/^sw.html?$/i.test(filename))){
 navigator.serviceWorker.controller.postMessage({
   'type': 'hook',
   'url': '/'+filename,
   'content': fileblob
 });
-
+}
+/*
 if(/^index.html?$/i.test(filename)){
 navigator.serviceWorker.controller.postMessage({
   'type': 'hook',
   'url': '/',
   'content': fileblob
 });
-}
+}*/
 }
 
 
