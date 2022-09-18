@@ -1,3 +1,4 @@
+#   通过图片隐写,零成本发布你的WebApp(适用于中小型前后端分离H5)
 #   H5泛解析
 什么是H5泛解析？这是我新造的一个名词，这里举个例子说明：<br />首先，我这里有一个 WebApp : <br />[https://message.biliimg.com/bfs/im/bed8c43082ea6dc292657179f229cf29a43c9db6.png](https://message.biliimg.com/bfs/im/bed8c43082ea6dc292657179f229cf29a43c9db6.png)<br />你会说，怎么可能，这不是一张图片吗？<br />但实际上，这个图片隐写了一个压缩包，里面包含了 html , js , css 等文件，是一个完整的前端 APP 。<br />当你要运行（分发）这个 APP ，也很简单：<br />[https://h5trigger.github.io/sw.html#url=https://message.biliimg.com/bfs/im/bed8c43082ea6dc292657179f229cf29a43c9db6.png&pass=](https://h5trigger.github.io/sw.html#url=https://message.biliimg.com/bfs/im/bed8c43082ea6dc292657179f229cf29a43c9db6.png&pass=)<br />这又是什么原理？<br />原来是 [https://h5trigger.github.io/sw.html](https://h5trigger.github.io/sw.html) 这个页面，自动下载了这个 png ，把隐写的zip解压（支持密码），然后 使用ServiceWorker技术，实现了 WebApp.（此过程纯前端完成，不涉及任何后端）<br />H5泛解析就是  [https://h5trigger.github.io/sw.html](https://h5trigger.github.io/sw.html) 这个页面 ，针对任意指定的图片文件，均解包成 WebApp 的缝合技术。
 # 背景：
