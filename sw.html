@@ -1,0 +1,257 @@
+<html>
+<head>
+<title>Loading...</title>
+<style>
+p {
+    position: fixed;
+    left: 1rem;
+    height: 8rem;
+    overflow: hidden;
+    overflow-y: scroll;
+    scroll-margin: 0;
+    bottom: 1rem;
+	user-select：none;
+	-webkit-user-select:none;
+}
+
+p::-webkit-scrollbar {
+  width: 0;
+}
+</style>
+<!--- --->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/gildas-lormeau/zip.js/dist/zip.min.js"></script>
+</head>
+<body>
+<p id="infoBox"></p>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js').then(function(registration) {
+      // Registration was successful
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+	  if(navigator.serviceWorker.controller) main() ; else location.reload();
+    }, function(err) {
+      // registration failed :(
+      alert('ServiceWorker registration failed: ', err);
+    });
+  });
+}else{
+alert('不支持的浏览器');
+}
+
+ async function main(){
+ var searchParams = new URL("http://a?"+location.hash.slice(1)).searchParams;
+ var zipfile = searchParams.get("url");
+ var zippass = searchParams.get("pass");
+ if(!zipfile){
+	//显示生成页面
+document.write(document.body.innerHTML.match(new RegExp("<!--"+"-CODE([\\s\\S]*?)CO"+"DE--->"))[1]);
+	return ;
+ }
+ InfoWriteln=(e)=>{if (!searchParams.get("debug")) return;var infoBox = document.getElementById("infoBox");infoBox.innerHTML += e;infoBox.scrollTo(0,infoBox.scrollHeight)}
+ InfoWriteln("Downloading " + zipfile +"<br/>");
+ 
+ var zipblob = await png2zip(zipfile);
+ var file = await getZipFiles(zippass,zipblob);
+ InfoWriteln("Unzip file" +"<br/>");
+ for (let i in file.files){
+ if(file.files[i].directory) continue;
+ var fileblob = await downloadUnZipFile(file.password,file.files[i]);
+ InfoWriteln("Hook " +fileblob.filename+"<br/>");
+ hookFile(fileblob.filename,fileblob.blob)
+ }
+ InfoWriteln("All done , redirecting "+"<br/>");
+ 
+ var mianPage = searchParams.get("main");
+ if (!searchParams.get("debug")) location.href = "/"+(mianPage?mianPage:"");
+ }
+
+async function getZipFiles (password, fileBlob, projectId) {
+    try {
+      const reader = new zip.ZipReader(new zip.BlobReader(fileBlob, {}), {
+        password: password
+      })
+      const entries = await reader.getEntries()
+      await reader.close()
+      return { password: password, files: entries }
+    } catch (err) {
+      return [{ msg: err.toString() }, null]
+    }
+  }
+  
+async function downloadUnZipFile (password,file) {
+      const getURL = async (entry, options) => {
+	  return (await entry.getData(new zip.BlobWriter(), options));
+        //return URL.createObjectURL(await entry.getData(new zip.BlobWriter(), options))
+		
+      }
+      const controller = new AbortController()
+      const signal = controller.signal
+      return await getURL(file, {
+        password: password,
+        onprogress: (index, max) => {
+          //console.log(index, max)
+        },
+        onerror: (err) => {
+          this.$message.error(err.toString())
+        },
+        signal
+      }).then((fileblob) => {
+		return {"filename":file.filename,"blob":fileblob}
+      }).catch((err) => {
+        this.$message.error(err.toString())
+      })
+    }
+
+function hookFile(filename,fileblob){
+navigator.serviceWorker.controller.postMessage({
+  'type': 'hook',
+  'url': '/'+filename,
+  'content': fileblob
+});
+
+if(/^index.html?$/i.test(filename)){
+navigator.serviceWorker.controller.postMessage({
+  'type': 'hook',
+  'url': '/',
+  'content': fileblob
+});
+}
+}
+
+
+async function png2zip(url) {
+var ctx = await loadCanvas(url);
+var imgData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+var data = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height).data;
+var non_alpha_data=[];
+for(var i=0;i< data.length;i++){if(((i+1) % 4 == 0)) continue;non_alpha_data.push(data[i])}
+//var message = new TextDecoder().decode(concatTypedArrays(new Uint8Array(),non_alpha_data));
+var blobfile = new Blob([concatTypedArrays(new Uint8Array(),non_alpha_data)]);
+/*var img_url = document.getElementById('canvas').toDataURL("image/png");
+var a = document.createElement('a')
+	    a.href = img_url
+	    a.download = "ok.zip.png"
+	    a.target = '_blank'
+	    const clickEvent = new MouseEvent('click')
+	    a.dispatchEvent(clickEvent)*/
+return blobfile;
+};
+
+function concatTypedArrays(a, b) { // a, b TypedArray of same type
+    var c = new (a.constructor)(a.length + b.length);
+    c.set(a, 0);
+    c.set(b, a.length);
+    return c;
+}
+/*
+function getImgBase64(imgUrl) {
+window.URL = window.URL || window.webkitURL;
+var xhr = new XMLHttpRequest();
+xhr.open("get", imgUrl, true);
+// 至关重要
+xhr.responseType = "blob";
+xhr.onload = function () {
+if (this.status == 200) {
+//得到一个blob对象
+var blob = this.response;
+console.log("blob", blob)
+return blob;
+let oFileReader = new FileReader();
+oFileReader.onloadend = function (e) {
+// 此处拿到的已经是 base64的图片了
+let base64 = e.target.result;
+$(".ewm").attr("src", base64);
+};
+oFileReader.readAsDataURL(blob);
+}
+}
+xhr.send();
+}
+*/
+function loadCanvas(url){
+return new Promise((resolve,reject)=>{
+var image = new Image();
+image.crossOrigin = '';
+image.referrerPolicy="no-referrer";
+image.error = reject;
+image.onload = function(){
+var canvas = document.createElement("canvas");
+var ctx = canvas.getContext('2d');
+ctx.canvas.width = image.width;
+ctx.canvas.height = image.height;
+ctx.drawImage(image, 0, 0, ctx.canvas.width, ctx.canvas.height);
+resolve(ctx)
+}
+image.src = url;
+})}
+
+</script>
+
+
+<script>
+//此为加密页面的JS
+var importImage = function(e) {
+
+var reader = new FileReader();
+reader.readAsArrayBuffer(e.files[0]);
+reader.onload = function(){ return drawPic(this.result);}
+};
+
+function drawPic(data){
+var data = new Uint8ClampedArray(data);
+//window.data = data;
+var alpha_data=[];
+for(var i=0;i< data.length;i++){if(i&&(i % 3 === 0)) alpha_data.push(255);alpha_data.push(data[i])}
+data = concatTypedArrays(new Uint8ClampedArray(),alpha_data)
+var height = parseInt((data.length/3)**(1/2)+1)
+window.asasas=[data.length,height];
+var tempdata = [];
+for(var i=0;i<(height**2)*4-data.length;i++) tempdata.push(255);
+data = concatTypedArrays(data,tempdata);
+window.data=data;
+var ctx = document.getElementById('canvas').getContext('2d');
+ctx.canvas.height = ctx.canvas.width = height;
+//ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height)
+window.dataImage = new ImageData(data, height, height);
+ctx.clearRect(0,0,ctx.canvas.width, ctx.canvas.height);
+ctx.globalCompositeOperation = "copy";
+ctx.putImageData(dataImage,0, 0);
+}
+
+var decode = function() {
+var ctx = document.getElementById('canvas').getContext('2d');
+var imgData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+var ctx = document.getElementById('canvas').getContext('2d');
+var data = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height).data;
+var non_alpha_data=[];
+for(var i=0;i< data.length;i++){if(((i+1) % 4 == 0)) continue;non_alpha_data.push(data[i])}
+//var message = new TextDecoder().decode(concatTypedArrays(new Uint8Array(),non_alpha_data));
+var blobfile = new Blob([concatTypedArrays(new Uint8Array(),non_alpha_data)]);
+var img_url = document.getElementById('canvas').toDataURL("image/png");
+var a = document.createElement('a')
+	    a.href = img_url
+	    a.download = "ok.zip.png"
+	    a.target = '_blank'
+	    const clickEvent = new MouseEvent('click')
+	    a.dispatchEvent(clickEvent)
+};
+
+function concatTypedArrays(a, b) { // a, b TypedArray of same type
+    var c = new (a.constructor)(a.length + b.length);
+    c.set(a, 0);
+    c.set(b, a.length);
+    return c;
+}
+
+</script>
+</body>
+<!---CODE
+<html>
+<body>
+选择你的ZIP（可加密）：<input type='file' id='file' onchange="importImage(this)"/>
+<button id='messageDecoded' onclick="decode(this)">下载图片</button><br>
+<canvas id='canvas' style="width: 600px;"></canvas><br>
+</body>
+</html>CODE--->
+</html>
