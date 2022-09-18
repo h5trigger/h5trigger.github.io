@@ -63,7 +63,7 @@ document.write(document.body.innerHTML.match(new RegExp("<!--"+"-CODE([\\s\\S]*?
  InfoWriteln("All done , redirecting "+"<br/>");
  
  var mianPage = searchParams.get("main");
- if (!searchParams.get("debug")) location.href = "/"+(mianPage?mianPage:"");
+ if (!searchParams.get("debug")) location.href = "/"+(mianPage?mianPage:"index.html");
  }
 
 async function getZipFiles (password, fileBlob, projectId) {
